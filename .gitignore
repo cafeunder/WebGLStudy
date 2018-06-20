@@ -1,0 +1,4 @@
+node_modules/
+js/index.js.map
+js/index.min.js
+debug.log

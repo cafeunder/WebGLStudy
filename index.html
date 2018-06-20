@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html id="doc" lang="ja">
+
+<!--Noto Fonts (c) Google Inc. Licensed under Apache License 2.0-->
+<!--@import url(http://fonts.googleapis.com/earlyaccess/notosansjapanese.css);-->
+
+<head>
+  <title>ライフゲーム</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+  <link href="style/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="style/master.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="lib/bootstrap.min.js"></script>
+  <script id="vshader" src="js/vshader.js" type="x-shader/x-vertex">
+    attribute vec3 position;
+    uniform mat4 mvpMatrix;
+    
+    void main(void) {
+        gl_Position = mvpMatrix * vec4(position, 1.0);
+    }
+  </script>
+  <script id="fshader" src="js/fshader.js" type="x-shader/x-fragment">
+    void main(void)
+    {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+  </script>
+  <script src="lib/minMatrix.js"></script>
+  <script src="js/script.js" type="text/javascript"></script>
+</head>
+
+<body id="lifeBody">
+  <span class="unselectable">
+    <canvas id="mycanvas"></canvas>
+  </span>
+  <div id="copyright">
+    copyright(C) 2018 cafeunder<br><br>
+  </div>
+</body>

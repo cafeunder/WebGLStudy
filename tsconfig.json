@@ -1,0 +1,39 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "noImplicitAny": false,
+        "sourceMap": false,
+        "outFile": "index.js"
+    },
+    "files": [
+        "./src/common.ts",
+        "./src/global/DOMController.ts",
+        "./src/global/mouse.ts",
+        "./src/global/fps.ts",
+        "./src/global/imageManager.ts",
+        "./src/global/keyboard.ts",
+        "./src/global/global.ts",
+        "./src/cell/cellMap.ts",
+        "./src/canvasDrawer.ts",
+        "./src/canvasImageDrawer.ts",
+        "./src/canvasBitmapDrawer.ts",
+        "./src/colorMap.ts",
+        "./src/cell/cellMapView.ts",
+        "./src/cell/cellMapController.ts",
+        "./src/cell/cellMapAlternationSetter.ts",
+        "./src/cell/cellMapDrawPropertySetter.ts",
+        "./src/cell/cellPlanter.ts",
+        "./src/menu/menuElement.ts",
+        "./src/menu/cellSizeConfigMenu.ts",
+        "./src/menu/windowModeMenu.ts",
+        "./src/menu/mainMenu.ts",
+        "./src/menu/messageBox.ts",
+        "./src/menu/menuManager.ts",
+        "./src/menu/mainMenuPanel.ts",
+        "./src/menu/topPagePanel.ts",
+        "./src/menu/itemPanel.ts",
+        "./src/pattern/templatePattern.ts",
+        "./src/pattern/stampPattern.ts",
+        "./src/program.ts"
+    ]
+}
