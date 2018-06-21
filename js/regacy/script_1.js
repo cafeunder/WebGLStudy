@@ -3,11 +3,14 @@ onload = function(){
     // === initialize === //
     // initialize canvas
     var c = document.getElementById('mycanvas');
-    c.width = 600;
-    c.height = 600;
+    c.width = 300;
+    c.height = 300;
 
     // initialize WebGL
     var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearDepth(1.0); // clearColorでクリアされる深度を設定
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // create vertex/fragment shader
     var v_shader = create_shader('vshader');
@@ -71,49 +74,20 @@ onload = function(){
     // create projection&view transform matrix
     m.multiply(pMatrix, vMatrix, vpMatrix);
 
-    var count = 0;
-    (function(){
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        gl.clearDepth(1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    m.translate(mMatrix, [1.5, 0.0, 0.0], mMatrix);
+    m.multiply(vpMatrix, mMatrix, mvpMatrix);
+    gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.flush();
 
-        count++;
-        
-        var rad = (count % 360) * Math.PI / 180;
+    m.identity(mMatrix);
 
-        // model 1
-        m.identity(mMatrix);
-        var x = Math.cos(rad);
-        var y = Math.sin(rad);
-        m.translate(mMatrix, [x, y + 1.0, 0.0], mMatrix);
+    m.translate(mMatrix, [-1.5, 0.0, 0.0], mMatrix);
+    m.multiply(vpMatrix, mMatrix, mvpMatrix);
+    gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.flush();
 
-        m.multiply(vpMatrix, mMatrix, mvpMatrix);
-        gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
-
-        // model 2
-        m.identity(mMatrix);
-        m.translate(mMatrix, [1.0, -1.0, 0.0], mMatrix);
-        m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
-
-        m.multiply(vpMatrix, mMatrix, mvpMatrix);
-        gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
-
-        // model 3
-        var s = Math.sin(rad) + 1.0;
-        m.identity(mMatrix);
-        m.translate(mMatrix, [-1.0, -1.0, 0.0], mMatrix);
-        m.scale(mMatrix, [s, s, 0.0], mMatrix)
-
-        m.multiply(vpMatrix, mMatrix, mvpMatrix);
-        gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
-
-        gl.flush();
-
-        setTimeout(arguments.callee, 1000 / 30);
-    })();
 
     function create_shader(id){
         var scriptElement = document.getElementById(id);
