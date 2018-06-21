@@ -19,16 +19,23 @@ onload = function(){
     // vertex position
     var vertex_position = [
         // x y z
-        0.0, 1.0, 0.0, // v1
-        1.0, 0.0, 0.0, // v2
-        -1.0, 0.0, 0.0  // v3
+         0.0,  1.0,  0.0, // v1
+         1.0,  0.0,  0.0, // v2
+        -1.0,  0.0,  0.0, // v3
+         0.0, -1.0,  0.0  // v4
     ];
     // vertex color
     var vertex_color = [
         // r g b a
-        1.0, 0.0, 0.0, 1.0, // v1
-        0.0, 1.0, 0.0, 1.0, // v2
-        0.0, 0.0, 1.0, 1.0, // v3
+        1.0, 1.0, 0.0, 1.0, // v1
+        1.0, 1.0, 0.0, 1.0, // v2
+        0.0, 1.0, 1.0, 1.0, // v3
+        0.0, 1.0, 1.0, 1.0  // v4
+    ];
+
+    var index = [
+        0, 1, 2,
+        1, 2, 3
     ];
 
 
@@ -48,6 +55,15 @@ onload = function(){
 
     // bind vbo and set attribute
     set_attribute(vbo, attLocation, attStride);
+
+
+    // === create ibo === //
+    // create IBO
+    var ibo = create_ibo(index)
+
+    // bind ibo
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
 
     // === transform === //
@@ -71,6 +87,7 @@ onload = function(){
     // create projection&view transform matrix
     m.multiply(pMatrix, vMatrix, vpMatrix);
 
+
     var count = 0;
     (function(){
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -78,38 +95,14 @@ onload = function(){
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         count++;
-        
         var rad = (count % 360) * Math.PI / 180;
 
-        // model 1
         m.identity(mMatrix);
-        var x = Math.cos(rad);
-        var y = Math.sin(rad);
-        m.translate(mMatrix, [x, y + 1.0, 0.0], mMatrix);
-
-        m.multiply(vpMatrix, mMatrix, mvpMatrix);
-        gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
-
-        // model 2
-        m.identity(mMatrix);
-        m.translate(mMatrix, [1.0, -1.0, 0.0], mMatrix);
         m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
-
         m.multiply(vpMatrix, mMatrix, mvpMatrix);
         gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-        // model 3
-        var s = Math.sin(rad) + 1.0;
-        m.identity(mMatrix);
-        m.translate(mMatrix, [-1.0, -1.0, 0.0], mMatrix);
-        m.scale(mMatrix, [s, s, 0.0], mMatrix)
-
-        m.multiply(vpMatrix, mMatrix, mvpMatrix);
-        gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
-
+        gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
         gl.flush();
 
         setTimeout(arguments.callee, 1000 / 30);
@@ -159,12 +152,22 @@ onload = function(){
     
     function create_vbo(data){
         var vbo = gl.createBuffer();
-    
+
         gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
-    
+
         return vbo;
+    }
+
+    function create_ibo(data){
+        var ibo = gl.createBuffer();
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int16Array(data), gl.STATIC_DRAW);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+        return ibo;
     }
 
     function set_attribute(vbo, attL, attS){
