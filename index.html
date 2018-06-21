@@ -12,18 +12,24 @@
   <link rel="stylesheet" type="text/css" href="style/master.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="lib/bootstrap.min.js"></script>
-  <script id="vshader" src="js/vshader.js" type="x-shader/x-vertex">
+  <script id="vshader" type="x-shader/x-vertex">
     attribute vec3 position;
+    attribute vec4 color;
     uniform mat4 mvpMatrix;
+    varying vec4 vColor;
     
     void main(void) {
+        vColor = color;
         gl_Position = mvpMatrix * vec4(position, 1.0);
     }
   </script>
-  <script id="fshader" src="js/fshader.js" type="x-shader/x-fragment">
+  <script id="fshader" type="x-shader/x-fragment">
+    precision mediump float;
+    varying vec4 vColor;
+    
     void main(void)
     {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        gl_FragColor = vColor;
     }
   </script>
   <script src="lib/minMatrix.js"></script>
