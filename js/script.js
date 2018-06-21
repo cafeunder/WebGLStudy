@@ -8,6 +8,7 @@ onload = function(){
 
     // initialize WebGL
     var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    gl.enable(gl.CULL_FACE);
 
     // create vertex/fragment shader
     var v_shader = create_shader('vshader');
@@ -27,10 +28,10 @@ onload = function(){
     // vertex color
     var vertex_color = [
         // r g b a
-        1.0, 1.0, 0.0, 1.0, // v1
-        1.0, 1.0, 0.0, 1.0, // v2
-        0.0, 1.0, 1.0, 1.0, // v3
-        0.0, 1.0, 1.0, 1.0  // v4
+        1.0, 0.0, 0.0, 1.0, // v1
+        0.0, 1.0, 0.0, 1.0, // v2
+        0.0, 0.0, 1.0, 1.0, // v3
+        1.0, 1.0, 0.0, 1.0  // v4
     ];
 
     var index = [
@@ -99,6 +100,7 @@ onload = function(){
 
         m.identity(mMatrix);
         m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
+        m.rotate(mMatrix, Math.PI / 6, [0, 0, 1], mMatrix);
         m.multiply(vpMatrix, mMatrix, mvpMatrix);
         gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
 
