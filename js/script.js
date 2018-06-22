@@ -17,6 +17,25 @@ onload = function(){
     var f_shader = create_shader('fshader');
     var prg = create_program(v_shader, f_shader);
 
+    // create axis vbo
+    var axis_line_pos = create_vbo([
+        -100.0, 0.0,  0.0,
+        100.0, 0.0,  0.0,
+        0.0,  -100.0,  0.0,
+        0.0,  100.0,  0.0,
+        0.0,  0.0,  -100.0,
+        0.0,  0.0,  100.0
+    ]);
+    var axis_line_col = create_vbo([
+        1.0, 0.0, 0.0, 0.8,
+        1.0, 0.0, 0.0, 0.8,
+        0.0, 1.0, 0.0, 0.8,
+        0.0, 1.0, 0.0, 0.8,
+        0.2, 0.3, 1.0, 0.8,
+        0.2, 0.3, 1.0, 0.8
+    ]);
+    var axis_line_vbo = [axis_line_pos, axis_line_col];
+
 
     // === model definition === //
     // torus
@@ -36,9 +55,6 @@ onload = function(){
     var attStride = new Array(2);
     attStride[0] = 3;
     attStride[1] = 4;
-
-    // bind vbo and set attribute
-    set_attribute(vbo, attLocation, attStride);
 
 
     // === create ibo === //
@@ -65,7 +81,7 @@ onload = function(){
     var uniLocation = gl.getUniformLocation(prg, 'mvpMatrix');
 
     // view transform
-    m.lookAt([0.0, 0.0, 8.0], [0, 0, 0], [0, 1, 0], vMatrix);
+    m.lookAt([3.0, 6.0, 5.0], [0, 0, 0], [0, 1, 0], vMatrix);
     // projection transform
     m.perspective(90, c.width / c.height, 0.1, 100, pMatrix);
     // create projection&view transform matrix
@@ -74,23 +90,38 @@ onload = function(){
 
     var count = 0;
     (function(){
+        // clear canvas
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clearDepth(1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        count++;
+        // draw axis
+        set_attribute(axis_line_vbo, attLocation, attStride);
+        m.identity(mMatrix);
+        m.multiply(vpMatrix, mMatrix, mvpMatrix);
+        gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+        gl.drawArrays(gl.LINES, 0, 6);
+
+
+        //★☆★ 描画本体 ★☆★//
+
+        set_attribute(vbo, attLocation, attStride);
         var rad = (count % 360) * Math.PI / 180;
 
         m.identity(mMatrix);
-        m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
-        m.rotate(mMatrix, Math.PI / 6, [0, 0, 1], mMatrix);
+        // m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
+        // m.rotate(mMatrix, Math.PI / 6, [0, 0, 1], mMatrix);
         m.multiply(vpMatrix, mMatrix, mvpMatrix);
         gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
 
         gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
-        gl.flush();
 
+        //★☆★ 描画本体 ★☆★//
+
+
+        gl.flush();
         setTimeout(arguments.callee, 1000 / 30);
+        count++;
     })();
 
     function create_shader(id){
@@ -166,23 +197,34 @@ onload = function(){
 
     function torus(row, column, irad, orad){
         var pos = new Array(), col = new Array(), idx = new Array();
+
+        //　円の繰り返し
         for(var i = 0; i <= row; i++){
+            // 2πをrow等分したi番目
             var r = Math.PI * 2 / row * i;
-            var rr = Math.cos(r);
-            var ry = Math.sin(r);
-            for(var ii = 0; ii <= column; ii++){
-                var tr = Math.PI * 2 / column * ii;
-                var tx = (rr * irad + orad) * Math.cos(tr);
-                var ty = ry * irad;
-                var tz = (rr * irad + orad) * Math.sin(tr);
+            // xy平面上で円軌道（y座標はこの時点で確定している）
+            var rr = irad * Math.cos(r);
+            var ry = irad * Math.sin(r);
+
+            // チューブの繰り返し
+            for(var j = 0; j <= column; j++){
+                // 2πをcolumn等分した1番目
+                var tr = Math.PI * 2 / column * j;
+                // 座標を決定
+                var tx = (rr + orad) * Math.cos(tr);
+                var ty = ry;
+                var tz = (rr + orad) * Math.sin(tr);
                 pos.push(tx, ty, tz);
-                var tc = hsva(360 / column * ii, 1, 1, 1);
+                // 色を決定
+                var tc = hsva(360 / column * j, 1, 1, 1);
                 col.push(tc[0], tc[1], tc[2], tc[3]);
             }
         }
-        for(i = 0; i < row; i++){
-            for(ii = 0; ii < column; ii++){
-                r = (column + 1) * i + ii;
+
+        // わかんね
+        for(var i = 0; i < row; i++){
+            for(var j = 0; j < column; j++){
+                var r = (column + 1) * i + j;
                 idx.push(r, r + column + 1, r + 1);
                 idx.push(r + column + 1, r + column + 2, r + 1);
             }
