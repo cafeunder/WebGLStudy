@@ -19,15 +19,34 @@ onload = function(){
 
 
     // === model definition === //
-    // torus
-    var [position, color, index] = torus(32, 32, 0.8, 2.0);
+    // vertex position
+    var vertex_position = [
+        // x y z
+         0.0,  1.0,  0.0, // v1
+         1.0,  0.0,  0.0, // v2
+        -1.0,  0.0,  0.0, // v3
+         0.0, -1.0,  0.0  // v4
+    ];
+    // vertex color
+    var vertex_color = [
+        // r g b a
+        1.0, 0.0, 0.0, 1.0, // v1
+        0.0, 1.0, 0.0, 1.0, // v2
+        0.0, 0.0, 1.0, 1.0, // v3
+        1.0, 1.0, 0.0, 1.0  // v4
+    ];
+
+    var index = [
+        0, 1, 2,
+        1, 2, 3
+    ];
 
 
     // === create vbo === //
     // create VBO
     var vbo = new Array(2);
-    vbo[0] = create_vbo(position);
-    vbo[1] = create_vbo(color);
+    vbo[0] = create_vbo(vertex_position);
+    vbo[1] = create_vbo(vertex_color);
 
     var attLocation = new Array(2);
     attLocation[0] = gl.getAttribLocation(prg, 'position');
@@ -65,7 +84,7 @@ onload = function(){
     var uniLocation = gl.getUniformLocation(prg, 'mvpMatrix');
 
     // view transform
-    m.lookAt([0.0, 0.0, 8.0], [0, 0, 0], [0, 1, 0], vMatrix);
+    m.lookAt([0.0, 0.0, 3.0], [0, 0, 0], [0, 1, 0], vMatrix);
     // projection transform
     m.perspective(90, c.width / c.height, 0.1, 100, pMatrix);
     // create projection&view transform matrix
@@ -162,51 +181,5 @@ onload = function(){
             gl.vertexAttribPointer(attL[i], attS[i], gl.FLOAT, false, 0, 0);
         }
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
-    }
-
-    function torus(row, column, irad, orad){
-        var pos = new Array(), col = new Array(), idx = new Array();
-        for(var i = 0; i <= row; i++){
-            var r = Math.PI * 2 / row * i;
-            var rr = Math.cos(r);
-            var ry = Math.sin(r);
-            for(var ii = 0; ii <= column; ii++){
-                var tr = Math.PI * 2 / column * ii;
-                var tx = (rr * irad + orad) * Math.cos(tr);
-                var ty = ry * irad;
-                var tz = (rr * irad + orad) * Math.sin(tr);
-                pos.push(tx, ty, tz);
-                var tc = hsva(360 / column * ii, 1, 1, 1);
-                col.push(tc[0], tc[1], tc[2], tc[3]);
-            }
-        }
-        for(i = 0; i < row; i++){
-            for(ii = 0; ii < column; ii++){
-                r = (column + 1) * i + ii;
-                idx.push(r, r + column + 1, r + 1);
-                idx.push(r + column + 1, r + column + 2, r + 1);
-            }
-        }
-        return [pos, col, idx];
-    }
-
-    function hsva(h, s, v, a){
-        if(s > 1 || v > 1 || a > 1){return;}
-        var th = h % 360;
-        var i = Math.floor(th / 60);
-        var f = th / 60 - i;
-        var m = v * (1 - s);
-        var n = v * (1 - s * f);
-        var k = v * (1 - s * (1 - f));
-        var color = new Array();
-        if(!s > 0 && !s < 0){
-            color.push(v, v, v, a); 
-        } else {
-            var r = new Array(v, n, m, m, k, v);
-            var g = new Array(k, v, v, n, m, m);
-            var b = new Array(m, m, k, v, v, n);
-            color.push(r[i], g[i], b[i], a);
-        }
-        return color;
     }
 };
