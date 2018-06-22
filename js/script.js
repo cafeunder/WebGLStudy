@@ -122,7 +122,7 @@ onload = function(){
     uniLocation[2] = gl.getUniformLocation(prg, 'lightDirection');
 
     // view transform
-    m.lookAt([0.0, 0.0, 8.0], [0, 0, 0], [0, 1, 0], vMatrix);
+    m.lookAt([3.0, 4.0, 5.0], [0, 0, 0], [0, 1, 0], vMatrix);
     // projection transform
     m.perspective(90, c.width / c.height, 0.1, 100, pMatrix);
     // create projection&view transform matrix
@@ -137,7 +137,7 @@ onload = function(){
     var count = 0;
     (function(){
         // clear canvas
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.clearColor(0.2, 0.2, 0.2, 1.0);
         gl.clearDepth(1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
