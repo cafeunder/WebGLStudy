@@ -64,8 +64,8 @@ onload = function(){
 
 
     // create vertex/fragment shader
-    var v_shader = create_shader(gl, 'vshader');
-    var f_shader = create_shader(gl, 'fshader');
+    var v_shader = create_shader(gl, 'phong_vshader');
+    var f_shader = create_shader(gl, 'phong_fshader');
     var prg = create_program(gl, v_shader, f_shader);
 
     // initialize axis
