@@ -153,7 +153,7 @@ onload = function(){
         //★☆★ 描画本体 ★☆★//
         gl.useProgram(prg);
 
-        lightPosition[1] = 10 * Math.sin(Math.PI * count / 334);
+        lightPosition[1] = 10 * Math.sin(Math.PI * count / 34);
 
         set_attribute(gl, vbo, attLocation, attStride);
         var rad = (count % 360) * Math.PI / 180;
