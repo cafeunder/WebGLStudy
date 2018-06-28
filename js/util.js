@@ -70,6 +70,23 @@ function set_attribute(gl, vbo, attL, attS) {
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 }
 
+function create_texture(source){
+    var img = new Image();
+    
+    img.onload = function(){
+        var tex = gl.createTexture();
+
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        gl.generateMipmap(gl.TEXTURE_2D);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+
+        texture = tex;
+    };
+    
+    img.src = source;
+}
+
 function torus(row, column, irad, orad) {
     var pos = new Array(), nor = new Array(), col = new Array(), idx = new Array();
 
