@@ -64,8 +64,8 @@ onload = function(){
 
 
     // create vertex/fragment shader
-    var v_shader = create_shader(gl, 'phong_vshader');
-    var f_shader = create_shader(gl, 'phong_fshader');
+    var v_shader = create_shader(gl, 'vshader');
+    var f_shader = create_shader(gl, 'fshader');
     var prg = create_program(gl, v_shader, f_shader);
 
     // initialize axis
@@ -119,9 +119,10 @@ onload = function(){
     var uniLocation = new Array();
     uniLocation[0] = gl.getUniformLocation(prg, 'mvpMatrix');
     uniLocation[1] = gl.getUniformLocation(prg, 'invMatrix');
-    uniLocation[2] = gl.getUniformLocation(prg, 'lightDirection');
+    uniLocation[2] = gl.getUniformLocation(prg, 'lightPosition');
     uniLocation[3] = gl.getUniformLocation(prg, 'ambientColor');
     uniLocation[4] = gl.getUniformLocation(prg, 'eyeDirection');
+    uniLocation[5] = gl.getUniformLocation(prg, 'mMatrix');
 
     // view transform
     m.lookAt([3.0, 4.0, 5.0], [0, 0, 0], [0, 1, 0], vMatrix);
@@ -132,7 +133,7 @@ onload = function(){
 
 
     // === lighting === //
-    var lightDirection = [-0.5, 0.5, 0.5];
+    var lightPosition = [0, 0, 0];
     var ambientColor = [0.1, 0.1, 0.1, 0];
     var eyeDirection = [3.0, 4.0, 5.0];
 
@@ -152,6 +153,7 @@ onload = function(){
         //★☆★ 描画本体 ★☆★//
         gl.useProgram(prg);
 
+        lightPosition[1] = 10 * Math.sin(Math.PI * count / 334);
 
         set_attribute(gl, vbo, attLocation, attStride);
         var rad = (count % 360) * Math.PI / 180;
@@ -164,9 +166,10 @@ onload = function(){
 
         gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
         gl.uniformMatrix4fv(uniLocation[1], false, invMatrix);
-        gl.uniform3fv(uniLocation[2], lightDirection);
+        gl.uniform3fv(uniLocation[2], lightPosition);
         gl.uniform4fv(uniLocation[3], ambientColor);
         gl.uniform3fv(uniLocation[4], eyeDirection);
+        gl.uniformMatrix4fv(uniLocation[5], false, mMatrix);
 
         gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
 
